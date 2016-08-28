@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./dist/",
+        "outDir": "./dist",
         "sourceMap": true,
         "noImplicitAny": true,
         "module": "commonjs",
@@ -8,7 +8,9 @@
         "jsx": "react"
     },
     "files": [
-        "./typings/index.d.ts",
-        "./src/main.ts"
+        "./src/main.ts",
+        "./src/pagination.ts",
+        "./src/table.ts",
+        "./src/utils.ts"
     ]
 }
