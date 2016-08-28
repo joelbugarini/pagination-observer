@@ -1,4 +1,4 @@
-export default class utils {
+export default class Utils {
     constructor(){}
     nextTo(target: HTMLElement,element: HTMLElement){
         target.parentNode.insertBefore(element, target.nextSibling);

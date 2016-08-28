@@ -1,57 +1,96 @@
 import Pagination from './pagination.ts';
 import Table from './table.ts';
-import utils from './utils.ts';
+import Utils from './utils.ts';
 
-let o = new utils();
-let current: string = "3";
+let o = new Utils();
+let current: string = "1";
 let show: number = 4;
+let paginator = document.createElement("ul");
+let inputCurrent: HTMLInputElement = <HTMLInputElement> document.createElement("input");
 
 function Main(){
 
     let element: HTMLTableElement = <HTMLTableElement> document.getElementById("po");
     let table = new Table(element);
 
-    let inputCurrent: HTMLInputElement = <HTMLInputElement> document.createElement("input");
-    //inputCurrent.style.display = "none";
+    CurrentDOM(element)
+
+
+    let isBetween = (x: any)=> table.tr.indexOf(x) >= ((+current*show)-show) && table.tr.indexOf(x) < +current*show;
+    //Show tr's
+    o.dropWhile(table.tr, isBetween).forEach((row: HTMLElement)=>{
+        row.style.color = "red";
+        row.style.display = "none";
+    });
+
+    o.takeWhile(table.tr, isBetween).forEach((row: HTMLElement)=>{
+        row.style.color = "black";
+        row.style.display = "table-row";
+    });
+
+    let p = new Pagination(+current,Math.ceil(table.tr.length/show));
+    PaginationDOM(p, element);
+
+
+
+}
+Main();
+
+function CurrentDOM(element: HTMLTableElement) {
+
+    let table = new Table(element);
+
+    inputCurrent.style.display = "none";
     inputCurrent.type = "text";
     inputCurrent.className = "current";
     inputCurrent.value = current;
+
     o.nextTo(element, inputCurrent);
 
+    let isBetween = (x: any)=> table.tr.indexOf(x) >= ((+current*show)-show) && table.tr.indexOf(x) < +current*show;
 
-    let predicate = (x: any)=> table.tr.indexOf(x) >= ((+current*show)-show) && table.tr.indexOf(x) < +current*show;
-    //Show tr's
-    o.dropWhile(table.tr, predicate).forEach((row: HTMLElement)=>{
-        row.style.color = "red";
-    });
+    inputCurrent.onchange = function(){
+        current = this.value;
 
-/*    o.take(table.tr, show).forEach(function(row: HTMLElement){
-        row.style.display = "table-row";
-    });
-    //Hide tr's
-    o.drop(table.tr, show).forEach(function(row: HTMLElement){
-        row.style.display = "none";
-    });
-*/
-    let p = new Pagination(1,Math.ceil(table.tr.length/show));
-    PaginationDOM(p, element);
+        o.dropWhile(table.tr, isBetween).forEach((row: HTMLElement)=>{
+            row.style.color = "red";
+            row.style.display = "none";
+        });
+
+        o.takeWhile(table.tr, isBetween).forEach((row: HTMLElement)=>{
+            row.style.color = "black";
+            row.style.display = "table-row";
+        });
+
+        paginator.parentElement.removeChild(paginator);
+        paginator.innerHTML = "";
+        let p = new Pagination(+current,Math.ceil(table.tr.length/show));
+        PaginationDOM(p, element);
+    };
 }
-Main();
 
 function PaginationDOM(p: Pagination, table: HTMLTableElement) {
     p.getCurrent(1);
 
-    let paginator = document.createElement("ul");
-    paginator.className += "pagination pull-right";
+    paginator.className = "pagination pull-right";
 
     p.rangeWithDots.forEach(function (e) {
         let li = document.createElement("li");
+        if(e==current) li.className = "active";
         li.style.cursor = "pointer";
         let a = document.createElement("a");
         li.appendChild(a);
         let text = document.createTextNode(e);
         a.appendChild(text);
         paginator.appendChild(li);
+
+        li.onclick = function () {
+            let move = 0;
+            if(e=='»'){ move = +current + 2; }
+            if(e=='«'){ move = +current - 2; }
+            inputCurrent.value = String((e=='»'||e=='«')?move:e);
+            inputCurrent.onchange(this);
+        }
     });
 
     o.nextTo(table, paginator);

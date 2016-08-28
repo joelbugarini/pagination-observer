@@ -32,7 +32,7 @@ export default class Pagination {
                     if (i - this.l === 2) {
                         this.rangeWithDots.push(String(this.l + 1));
                     } else if (i - this.l !== 1) {
-                        this.rangeWithDots.push('...');
+                        this.rangeWithDots.push(this.range[this.range.length-1]==i?'»':'«');
                     }
                 }
                 this.rangeWithDots.push(String(i));
