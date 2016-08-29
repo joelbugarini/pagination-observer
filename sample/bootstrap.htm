@@ -1,0 +1,33 @@
+
+ <!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="description" content="Table">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>PaginationObserver.js sample</title>
+        <link rel="autdor" href="humans.txt">
+    </head>
+
+   <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <body>
+    <div class="container">
+        <button class="btn" type="button" onclick="document.getElementById('po').getElementsByTagName('tbody')[0].appendChild(document.getElementById('po').getElementsByTagName('tbody')[0].children[0].cloneNode(true))">Add Row</button>
+
+        <table class="table pagination-observer" data-current="1" data-show="5" id="po">
+            <thead><tr><th>Id</th><th>Name</th><th>Last Name</th><th>Age</th></tr></thead>
+                <tbody>
+                    <tr><td>1</td><td>Alexander Benton</td><td>viverra.Donec.tempus@ridicsAenean.ca</td><td>Apr 9, 2016</td></tr>
+                    <tr><td>2</td><td>Garrison Barrera</td><td>commodo.alibero@anteVivamusnon.com</td><td>Jan 12, 2017</td></tr>
+                    <tr><td>3</td><td>Cathleen Vaughan</td><td>Duinissim@nec.co.uk</td><td>Mar 23, 2016</td></tr>
+                    <tr><td>4</td><td>Angelica Booth</td><td>Nulla.semper.tellus@aptenttaciti.org</td><td>Oct 14, 2015</td></tr>
+                    <tr><td>5</td><td>Barbara Barber</td><td>amet.massa.Quisque@etcommodoat.com</td><td>Jul 1, 2017</td></tr>
+
+                </tbody>
+            </table>
+
+         </div>
+    </body>
+
+     <script src="../dist/po.js"></script>
+</html>

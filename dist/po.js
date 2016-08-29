@@ -45,83 +45,22 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
-	var pagination_ts_1 = __webpack_require__(1);
-	var table_ts_1 = __webpack_require__(2);
+	var builder_ts_1 = __webpack_require__(4);
 	var utils_ts_1 = __webpack_require__(3);
 	var o = new utils_ts_1.default();
-	var current = "1";
-	var show = 4;
-	var paginator = document.createElement("ul");
-	var inputCurrent = document.createElement("input");
 	function Main() {
-	    var element = document.getElementById("po");
-	    var table = new table_ts_1.default(element);
-	    CurrentDOM(element);
-	    var isBetween = function (x) { return table.tr.indexOf(x) >= ((+current * show) - show) && table.tr.indexOf(x) < +current * show; };
-	    //Show tr's
-	    o.dropWhile(table.tr, isBetween).forEach(function (row) {
-	        row.style.color = "red";
-	        row.style.display = "none";
+	    var tables;
+	    tables = o.toArray(document.getElementsByClassName("pagination-observer"));
+	    tables.forEach(function (table) {
+	        var builder = new builder_ts_1.default(table);
+	        builder.hideRows();
+	        builder.createCurrentInput();
+	        builder.eventCurrentInput();
+	        builder.createPagination();
+	        builder.observe();
 	    });
-	    o.takeWhile(table.tr, isBetween).forEach(function (row) {
-	        row.style.color = "black";
-	        row.style.display = "table-row";
-	    });
-	    var p = new pagination_ts_1.default(+current, Math.ceil(table.tr.length / show));
-	    PaginationDOM(p, element);
 	}
 	Main();
-	function CurrentDOM(element) {
-	    var table = new table_ts_1.default(element);
-	    inputCurrent.style.display = "none";
-	    inputCurrent.type = "text";
-	    inputCurrent.className = "current";
-	    inputCurrent.value = current;
-	    o.nextTo(element, inputCurrent);
-	    var isBetween = function (x) { return table.tr.indexOf(x) >= ((+current * show) - show) && table.tr.indexOf(x) < +current * show; };
-	    inputCurrent.onchange = function () {
-	        current = this.value;
-	        o.dropWhile(table.tr, isBetween).forEach(function (row) {
-	            row.style.color = "red";
-	            row.style.display = "none";
-	        });
-	        o.takeWhile(table.tr, isBetween).forEach(function (row) {
-	            row.style.color = "black";
-	            row.style.display = "table-row";
-	        });
-	        paginator.parentElement.removeChild(paginator);
-	        paginator.innerHTML = "";
-	        var p = new pagination_ts_1.default(+current, Math.ceil(table.tr.length / show));
-	        PaginationDOM(p, element);
-	    };
-	}
-	function PaginationDOM(p, table) {
-	    p.getCurrent(1);
-	    paginator.className = "pagination pull-right";
-	    p.rangeWithDots.forEach(function (e) {
-	        var li = document.createElement("li");
-	        if (e == current)
-	            li.className = "active";
-	        li.style.cursor = "pointer";
-	        var a = document.createElement("a");
-	        li.appendChild(a);
-	        var text = document.createTextNode(e);
-	        a.appendChild(text);
-	        paginator.appendChild(li);
-	        li.onclick = function () {
-	            var move = 0;
-	            if (e == '»') {
-	                move = +current + 2;
-	            }
-	            if (e == '«') {
-	                move = +current - 2;
-	            }
-	            inputCurrent.value = String((e == '»' || e == '«') ? move : e);
-	            inputCurrent.onchange(this);
-	        };
-	    });
-	    o.nextTo(table, paginator);
-	}
 
 
 /***/ },
@@ -175,7 +114,9 @@
 	var Table = (function () {
 	    function Table(table) {
 	        this.table = table;
-	        this.tr = [].slice.call(this.table.getElementsByTagName("tr"));
+	        this.thead = [].slice.call(this.table.getElementsByTagName("thead"));
+	        this.tbody = [].slice.call(this.table.getElementsByTagName("tbody"));
+	        this.tr = [].slice.call(this.tbody[0].children);
 	    }
 	    return Table;
 	}());
@@ -198,58 +139,6 @@
 	        if (Array.isArray(thing))
 	            return thing;
 	        return Array.prototype.slice.call(thing);
-	    };
-	    Utils.prototype.head = function (arr) {
-	        return arr[0];
-	    };
-	    Utils.prototype.tail = function (arr) {
-	        return this.toArray(arr).slice(1);
-	    };
-	    Utils.prototype.take = function (arr, num) {
-	        return this.toArray(arr).slice(0, num);
-	    };
-	    Utils.prototype.drop = function (arr, num) {
-	        return this.toArray(arr).slice(num, arr.length);
-	    };
-	    Utils.prototype.concat = function (head, tail) {
-	        return [head].concat(tail);
-	    };
-	    Utils.prototype.curry = function (fn) {
-	        var Arguments = [];
-	        for (var _i = 1; _i < arguments.length; _i++) {
-	            Arguments[_i - 1] = arguments[_i];
-	        }
-	        var args = this.tail(Arguments);
-	        return function () {
-	            return fn.apply(this, args.concat(this.toArray(Arguments)));
-	        };
-	    };
-	    Utils.prototype.foldr = function (fn, init, xs) {
-	        if (xs.length === 0)
-	            return init;
-	        return fn(this.head(xs), this.foldr(fn, init, this.tail(xs)));
-	    };
-	    Utils.prototype.foldl = function (fn, init, xs) {
-	        if (xs.length === 0)
-	            return init;
-	        return fn(this.foldr(fn, init, this.tail(xs)), this.head(xs));
-	    };
-	    Utils.prototype.map = function (fn, xs) {
-	        var m = function (head, tail) {
-	            return this.concat(fn(head), tail);
-	        };
-	        return this.foldr(m, [], xs);
-	    };
-	    Utils.prototype.filter = function (fn, xs) {
-	        var f = function (head, tail) {
-	            if (fn(head))
-	                return this.concat(head, tail);
-	            return tail;
-	        };
-	        return this.foldr(f, [], xs);
-	    };
-	    Utils.prototype.append = function (xs, ys) {
-	        return this.foldr(this.concat, ys, xs);
 	    };
 	    Utils.prototype.takeWhile = function (source, predicate) {
 	        var i = 0;
@@ -277,6 +166,108 @@
 	}());
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.default = Utils;
+
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+	var pagination_ts_1 = __webpack_require__(1);
+	var table_ts_1 = __webpack_require__(2);
+	var utils_ts_1 = __webpack_require__(3);
+	var o = new utils_ts_1.default();
+	var Builder = (function () {
+	    function Builder(table) {
+	        this.current = table.dataset.current || "1";
+	        this.show = table.dataset.show || 5;
+	        this.ul_paginator = document.createElement("ul");
+	        this.input_current = document.createElement("input");
+	        this.dom_table = table;
+	        this.table = new table_ts_1.default(this.dom_table);
+	        this.observer = new MutationObserver(this.tableUpdate.bind(this));
+	        this.observerConfig = { attributes: true, childList: true, characterData: true };
+	    }
+	    Builder.prototype.tableUpdate = function (mutations) {
+	        var _this = this;
+	        mutations.forEach(function (mutation) {
+	            if (mutation.addedNodes[0]) {
+	                if (mutation.addedNodes[0].tagName == "TR")
+	                    _this.table.tr.push(mutation.addedNodes[0]);
+	                _this.hideRows();
+	                _this.ul_paginator.parentElement.removeChild(_this.ul_paginator);
+	                _this.ul_paginator.innerHTML = "";
+	                _this.createPagination();
+	            }
+	        });
+	    };
+	    Builder.prototype.observe = function () {
+	        this.observer.observe(this.table.tbody[0], this.observerConfig);
+	    };
+	    Builder.prototype.createCurrentInput = function () {
+	        this.input_current.style.display = "none";
+	        this.input_current.type = "text";
+	        this.input_current.className = "current";
+	        this.input_current.value = this.current;
+	        o.nextTo(this.dom_table, this.input_current);
+	    };
+	    Builder.prototype.eventCurrentInput = function () {
+	        var that = this;
+	        this.input_current.onchange = function () {
+	            that.current = this.value;
+	            that.hideRows();
+	            that.ul_paginator.parentElement.removeChild(that.ul_paginator);
+	            that.ul_paginator.innerHTML = "";
+	            var p = new pagination_ts_1.default(+that.current, Math.ceil(that.table.tr.length / that.show));
+	            that.createPagination();
+	        };
+	    };
+	    Builder.prototype.hideRows = function () {
+	        var _this = this;
+	        var isBetween = function (x) { return _this.table.tr.indexOf(x) >= ((+_this.current * _this.show) - _this.show) && _this.table.tr.indexOf(x) < +_this.current * _this.show; };
+	        o.dropWhile(this.table.tr, isBetween).forEach(function (row) {
+	            row.style.color = "red";
+	            row.style.display = "none";
+	        });
+	        o.takeWhile(this.table.tr, isBetween).forEach(function (row) {
+	            row.style.color = "black";
+	            row.style.display = "table-row";
+	        });
+	    };
+	    Builder.prototype.createPagination = function () {
+	        var _this = this;
+	        var pag = new pagination_ts_1.default(+this.current, Math.ceil(this.table.tr.length / this.show));
+	        pag.getCurrent(+this.current);
+	        this.ul_paginator.className = "pagination pull-right";
+	        this.ul_paginator.style.display = "visible";
+	        pag.rangeWithDots.forEach(function (e) {
+	            var li = document.createElement("li");
+	            if (e == _this.current)
+	                li.className = "active";
+	            li.style.cursor = "pointer";
+	            var a = document.createElement("a");
+	            li.appendChild(a);
+	            var text = document.createTextNode(e);
+	            a.appendChild(text);
+	            _this.ul_paginator.appendChild(li);
+	            li.onclick = function (f) {
+	                var move = 0;
+	                if (e == '»') {
+	                    move = +_this.current + 2;
+	                }
+	                if (e == '«') {
+	                    move = +_this.current - 2;
+	                }
+	                _this.input_current.value = String((e == '»' || e == '«') ? move : e);
+	                _this.input_current.onchange(f);
+	            };
+	        });
+	        o.nextTo(this.dom_table, this.ul_paginator);
+	    };
+	    return Builder;
+	}());
+	Object.defineProperty(exports, "__esModule", { value: true });
+	exports.default = Builder;
 
 
 /***/ }
