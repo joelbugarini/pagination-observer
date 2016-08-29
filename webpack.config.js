@@ -1,7 +1,8 @@
+
 module.exports = {
   entry: './src/main.ts',
   output: {
-    filename: 'dist/po.js'
+    filename: 'dist/pagination-observer.min.js'
   },
   resolve: {
     extensions: ['', '.webpack.js', '.web.js', '.ts', '.js']

@@ -59,7 +59,7 @@ export default class Builder{
 
             that.ul_paginator.parentElement.removeChild(that.ul_paginator);
             that.ul_paginator.innerHTML = "";
-            let p = new Pagination(+that.current,Math.ceil(that.table.tr.length/that.show));
+
             that.createPagination();
         };
 
@@ -84,7 +84,9 @@ export default class Builder{
         pag.getCurrent(+this.current);
 
         this.ul_paginator.className = "pagination pull-right";
+
         this.ul_paginator.style.display = "visible";
+
 
         pag.rangeWithDots.forEach( (e) => {
             let li = document.createElement("li");
