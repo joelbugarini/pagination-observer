@@ -12,4 +12,9 @@ Just add `class="pagination-observer"` to your table and then call the script. O
         <tr><th>Gina</th><th>Jefferies</th><th>48</th></tr>
 </table>
 ```
+This will render something like this:
+
+
+![alt table](https://cloud.githubusercontent.com/assets/4912547/18040843/f99ff1fe-6d66-11e6-974b-84f5e7525a06.JPG "Table")
+
 
