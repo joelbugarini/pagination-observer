@@ -7,7 +7,7 @@ let o = new Utils();
 export default class Builder{
     current: string;
     show: number;
-    dom_table: HTMLElement;
+    dom_table: any;
     table: Table;
     ul_paginator: HTMLUListElement;
     input_current: HTMLInputElement;
@@ -42,9 +42,12 @@ export default class Builder{
                 if (mutation.removedNodes[0].tagName == "TR"){
 
                     this.table.tr.forEach((tr: HTMLElement, index: number) => {
-                        if(mutation.removedNodes[0] == tr){
-                            //console.log(index);
-                            this.table.tr.splice(index,1);}
+                        if(mutation.removedNodes[0] == tr){                            
+                            this.table.tr.splice(index,1);
+                            if(this.table.tr.length < ((+this.current*this.show)-this.show)+1 ){
+                                this.current = "1";
+                            }
+                        }
                     });
 
                     this.hideRows();
@@ -72,6 +75,7 @@ export default class Builder{
     eventCurrentInput(){
         let that = this;
         this.input_current.onchange = function(){
+            that.dom_table.dataset.current = this.value;
             that.current = this.value;
             that.hideRows();
 
@@ -116,9 +120,11 @@ export default class Builder{
             a.appendChild(text);
             this.ul_paginator.appendChild(li);
 
+            if(pag.rangeWithDots.length <= 1) 
+                li.style.display = "none";
+
             li.onclick = (f) => {
-                let move = 0;
-                //this.dom_table.dataset.current = this.current;
+                let move = 0;                
                 if(e=='»'){ move = +this.current + 2; }
                 if(e=='«'){ move = +this.current - 2; }
                 this.input_current.value = String((e=='»'||e=='«')?move:e);
