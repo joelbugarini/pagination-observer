@@ -12,9 +12,10 @@
    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <body>
     <div class="container">
-        <button class="btn" type="button" onclick="document.getElementById('po').getElementsByTagName('tbody')[0].appendChild(document.getElementById('po').getElementsByTagName('tbody')[0].children[0].cloneNode(true))">Add Row</button>
+        <button class="btn" type="button" onclick="add()">Add Row</button>
+         <button class="btn" type="button" onclick="remove()">Remove</button>
 
-        <table class="table pagination-observer" data-current="1" data-show="5" id="po">
+        <table class="table pagination-observer" data-current="2" data-show="5" id="po">
             <thead><tr><th>Id</th><th>Name</th><th>Last Name</th><th>Age</th></tr></thead>
                 <tbody>
                     <tr><td>1</td><td>Alexander Benton</td><td>viverra.Donec.tempus@ridicsAenean.ca</td><td>Apr 9, 2016</td></tr>
@@ -28,6 +29,26 @@
 
          </div>
     </body>
+    <script>
+    var ct = 1;
+    var table = document.getElementById('po');
+    var tbody = table.getElementsByTagName('tbody')[0];
+    var newRow = function(){ return document.createElement("tr");}
+    var textRow = function(){
+        return "<td>"+ct+"</td><td>Cathleen Vaughan</td>"+
+               "<td>Duinissim@nec.co.uk</td><td>Mar 23, 2016</td>";
+    }
 
-     <script src="../dist/pagination-observer.js"></script>
+    function add() {
+        var r = newRow();
+        r.innerHTML = textRow();
+        tbody.appendChild(r);
+        ct+=1;
+    }
+
+    function remove() {
+        tbody.children[3].remove();
+    }
+    </script>
+     <script src="../dist/pagination-observer.min.js"></script>
 </html>

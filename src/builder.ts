@@ -27,13 +27,31 @@ export default class Builder{
 
     tableUpdate(mutations: any){
         mutations.forEach((mutation: any) => {
+            //console.log(this.table.tr);
             if (mutation.addedNodes[0]) {
-                if (mutation.addedNodes[0].tagName == "TR")
+                if (mutation.addedNodes[0].tagName == "TR"){
                     this.table.tr.push(mutation.addedNodes[0]);
                     this.hideRows();
                     this.ul_paginator.parentElement.removeChild(this.ul_paginator);
                     this.ul_paginator.innerHTML = "";
                     this.createPagination();
+                }
+            }
+
+            if (mutation.removedNodes[0]) {
+                if (mutation.removedNodes[0].tagName == "TR"){
+
+                    this.table.tr.forEach((tr: HTMLElement, index: number) => {
+                        if(mutation.removedNodes[0] == tr){
+                            //console.log(index);
+                            this.table.tr.splice(index,1);}
+                    });
+
+                    this.hideRows();
+                    this.ul_paginator.parentElement.removeChild(this.ul_paginator);
+                    this.ul_paginator.innerHTML = "";
+                    this.createPagination();
+                }
             }
         });
     }
@@ -100,6 +118,7 @@ export default class Builder{
 
             li.onclick = (f) => {
                 let move = 0;
+                //this.dom_table.dataset.current = this.current;
                 if(e=='»'){ move = +this.current + 2; }
                 if(e=='«'){ move = +this.current - 2; }
                 this.input_current.value = String((e=='»'||e=='«')?move:e);
