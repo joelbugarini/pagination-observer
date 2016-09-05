@@ -13,9 +13,9 @@
     <body>
     <div class="container">
         <button class="btn" type="button" onclick="add()">Add Row</button>
-         <button class="btn" type="button" onclick="remove()">Remove</button>
+         <button class="btn" type="button" onclick="removeTr()">Remove</button>
 
-        <table class="table pagination-observer" data-current="2" data-show="5" id="po">
+        <table class="table pagination-observer" data-current="1" data-show="5" id="po">
             <thead><tr><th>Id</th><th>Name</th><th>Last Name</th><th>Age</th></tr></thead>
                 <tbody>
                     <tr><td>1</td><td>Alexander Benton</td><td>viverra.Donec.tempus@ridicsAenean.ca</td><td>Apr 9, 2016</td></tr>
@@ -46,7 +46,7 @@
         ct+=1;
     }
 
-    function remove() {
+    function removeTr() {
         tbody.children[3].remove();
     }
     </script>
